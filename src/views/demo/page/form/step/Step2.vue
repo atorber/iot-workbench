@@ -63,7 +63,9 @@
             });
             emit('next', values);
           }, 1500);
-        } catch (error) {}
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       return { register };

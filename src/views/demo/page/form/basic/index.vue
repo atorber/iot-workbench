@@ -54,7 +54,9 @@
             });
             createMessage.success('提交成功！');
           }, 2000);
-        } catch (error) {}
+        } catch (error) {
+          console.error(error);
+        }
       }
 
       return { register };

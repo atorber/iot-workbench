@@ -4,6 +4,8 @@
   </div>
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { defineComponent } from 'vue';
   import { BasicTable, useTable } from '/@/components/Table';
   import { getBasicColumns } from './tableData';

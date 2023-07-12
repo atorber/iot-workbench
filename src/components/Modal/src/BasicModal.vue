@@ -49,6 +49,7 @@
   </Modal>
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
   import type { ModalProps, ModalMethods } from './typing';
 
   import {

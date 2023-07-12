@@ -9,6 +9,8 @@
   </div>
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { defineComponent, h } from 'vue';
   import { BasicTable, useTable, BasicColumn } from '/@/components/Table';
   import { optionsListApi } from '/@/api/demo/select';

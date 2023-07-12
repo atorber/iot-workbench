@@ -10,14 +10,14 @@ const dm: AppRouteModule = {
   redirect: '/dm/product',
   meta: {
     orderNo: 1,
-    icon: 'ion:grid-outline',
+    icon: 'ant-design:codepen-outlined',
     title: '设备管理',
   },
   children: [
     {
       path: 'product',
       name: 'Product',
-      component: () => import('/@/views/dashboard/analysis/index.vue'),
+      component: () => import('/@/views/iot/dm/Product.vue'),
       meta: {
         // affix: true,
         title: '产品',
@@ -26,7 +26,7 @@ const dm: AppRouteModule = {
     {
       path: 'device',
       name: 'Device',
-      component: () => import('/@/views/dashboard/workbench/index.vue'),
+      component: () => import('/@/views/iot/dm/Device.vue'),
       meta: {
         title: '设备',
       },
@@ -34,7 +34,7 @@ const dm: AppRouteModule = {
     {
       path: 'group',
       name: 'Group',
-      component: () => import('/@/views/dashboard/workbench/index.vue'),
+      component: () => import('/@/views/iot/dm/Group.vue'),
       meta: {
         title: '分组',
       },

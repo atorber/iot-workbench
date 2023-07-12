@@ -34,6 +34,8 @@
   </PageWrapper>
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { defineComponent } from 'vue';
   import { BasicTable, useTable, TableAction } from '/@/components/Table';
   import { PageWrapper } from '/@/components/Page';

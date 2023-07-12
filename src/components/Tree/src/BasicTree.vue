@@ -1,4 +1,6 @@
 <script lang="tsx">
+  import { type Recordable } from '@vben/types';
+
   import type { CSSProperties } from 'vue';
   import type {
     FieldNames,

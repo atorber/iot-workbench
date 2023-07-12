@@ -30,6 +30,8 @@
   </div>
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { defineComponent, nextTick } from 'vue';
 
   import { BasicTable, useTable, TableAction } from '/@/components/Table';

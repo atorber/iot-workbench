@@ -10,25 +10,17 @@ const gm: AppRouteModule = {
   redirect: '/gt/gateway',
   meta: {
     orderNo: 2,
-    icon: 'ion:grid-outline',
+    icon: 'ant-design:gateway-outlined',
     title: '网关管理',
   },
   children: [
     {
       path: 'gateway',
       name: 'Gateway',
-      component: () => import('/@/views/dashboard/analysis/index.vue'),
+      component: () => import('/@/views/iot/gt/Gateway.vue'),
       meta: {
         // affix: true,
         title: '网关列表',
-      },
-    },
-    {
-      path: 'drive',
-      name: 'Drvie',
-      component: () => import('/@/views/dashboard/workbench/index.vue'),
-      meta: {
-        title: '驱动',
       },
     },
     {
@@ -37,6 +29,14 @@ const gm: AppRouteModule = {
       component: () => import('/@/views/dashboard/workbench/index.vue'),
       meta: {
         title: '连接模型',
+      },
+    },
+    {
+      path: 'drive',
+      name: 'Drvie',
+      component: () => import('/@/views/dashboard/workbench/index.vue'),
+      meta: {
+        title: '驱动市场',
       },
     },
   ],

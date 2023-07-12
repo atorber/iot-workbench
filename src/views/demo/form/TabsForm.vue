@@ -20,6 +20,8 @@
 </template>
 
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { ref, defineComponent } from 'vue';
   import { Tabs } from 'ant-design-vue';
   import { PageWrapper } from '/@/components/Page';

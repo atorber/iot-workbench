@@ -2,6 +2,7 @@
   <span :class="getTagClass" v-if="getShowTag">{{ getContent }}</span>
 </template>
 <script lang="ts">
+  import type { PropType } from 'vue';
   import type { Menu } from '/@/router/types';
 
   import { defineComponent, computed } from 'vue';

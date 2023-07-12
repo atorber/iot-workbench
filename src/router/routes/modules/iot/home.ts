@@ -7,18 +7,18 @@ const home: AppRouteModule = {
   path: '/home',
   name: 'Home',
   component: LAYOUT,
-  redirect: '/iot/home',
+  redirect: '/home/index',
   meta: {
     hideChildrenInMenu: true,
-    icon: 'ion:grid-outline',
+    icon: 'ion:home-outline',
     title: '概览',
     orderNo: 0,
   },
   children: [
     {
       path: 'index',
-      name: 'Home',
-      component: () => import('/@/views/sys/about/index.vue'),
+      name: 'Index',
+      component: () => import('/@/views/dashboard/workbench/index.vue'),
       meta: {
         title: '概览',
         icon: 'ion:grid-outline',

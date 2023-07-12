@@ -35,6 +35,8 @@
 </template>
 
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { defineComponent, ref } from 'vue';
   import { Drawer, Space } from 'ant-design-vue';
   import { BasicForm, FormSchema, useForm, type FormProps } from '/@/components/Form';

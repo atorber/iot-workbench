@@ -6,18 +6,14 @@
           <TableAction
             :actions="[
               {
+                label: '查看',
+                onClick: handleEdit.bind(null, record),
+              },
+              {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',
                 onClick: handleDelete.bind(null, record),
-              },
-            ]"
-            :dropDownActions="[
-              {
-                label: '启用',
-                popConfirm: {
-                  title: '是否启用？',
-                  confirm: handleOpen.bind(null, record),
-                },
+                auth: 'super', // 根据权限控制是否显示: 有权限，会显示
               },
             ]"
           />
@@ -28,60 +24,69 @@
 </template>
 <script lang="ts">
   import { type Recordable } from '@vben/types';
-
   import { defineComponent } from 'vue';
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
 
-  import { demoListApi } from '/@/api/demo/table';
+  import { deviceListApi } from '/@/api/iot/dm/device';
 
   const columns: BasicColumn[] = [
     {
       title: 'ID',
-      dataIndex: 'id',
-      fixed: 'left',
-      width: 280,
+      dataIndex: 'deviceName',
+      width: 100,
     },
     {
-      title: '姓名',
-      dataIndex: 'name',
-      width: 260,
-    },
-    {
-      title: '地址',
-      dataIndex: 'address',
-    },
-    {
-      title: '编号',
-      dataIndex: 'no',
-      width: 300,
-    },
-    {
-      title: '开始时间',
+      title: '备注名称',
+      dataIndex: 'alias',
       width: 200,
-      dataIndex: 'beginTime',
     },
     {
-      title: '结束时间',
-      dataIndex: 'endTime',
-      width: 200,
+      title: '在线状态',
+      dataIndex: 'onlineState',
+    },
+    {
+      title: '产品名称',
+      dataIndex: 'productName',
+    },
+    {
+      title: '产品类别',
+      dataIndex: 'productCategory',
+    },
+    {
+      title: '节点类型',
+      dataIndex: 'deviceType',
+    },
+    {
+      title: '启用时间',
+      dataIndex: 'activeTime',
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
     },
   ];
   export default defineComponent({
     components: { BasicTable, TableAction },
     setup() {
       const [registerTable] = useTable({
-        title: 'TableAction组件及固定列示例',
-        api: demoListApi,
+        title: '设备',
+        api: deviceListApi,
         columns: columns,
-        rowSelection: { type: 'radio' },
         bordered: true,
+        rowKey: 'id',
+        rowSelection: {
+          type: 'checkbox',
+        },
         actionColumn: {
-          width: 160,
-          title: 'Action',
+          width: 250,
+          title: '操作',
           dataIndex: 'action',
           // slots: { customRender: 'action' },
         },
       });
+      function handleEdit(record: Recordable) {
+        console.log('点击了编辑', record);
+      }
       function handleDelete(record: Recordable) {
         console.log('点击了删除', record);
       }
@@ -90,6 +95,7 @@
       }
       return {
         registerTable,
+        handleEdit,
         handleDelete,
         handleOpen,
       };

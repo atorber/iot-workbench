@@ -12,6 +12,7 @@
   />
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
   import type { PropType } from 'vue';
   import { defineComponent, unref, computed, toRaw } from 'vue';
   import { Table } from 'ant-design-vue';
@@ -29,6 +30,7 @@
     components: { Table },
     props: {
       summaryFunc: {
+        // eslint-disable-next-line no-undef
         type: Function as PropType<Fn>,
       },
       summaryData: {

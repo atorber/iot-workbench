@@ -11,7 +11,7 @@
   </div>
 </template>
 <script lang="ts">
-  import type { CSSProperties } from 'vue';
+  import type { PropType, CSSProperties } from 'vue';
   import { defineComponent, onMounted, ref, unref, computed, onUnmounted } from 'vue';
   import Cropper from 'cropperjs';
   import 'cropperjs/dist/cropper.css';
@@ -62,7 +62,9 @@
     props,
     emits: ['cropend', 'ready', 'cropendError'],
     setup(props, { attrs, emit }) {
+      // eslint-disable-next-line no-undef
       const imgElRef = ref<ElRef<HTMLImageElement>>();
+      // eslint-disable-next-line no-undef
       const cropper = ref<Nullable<Cropper>>();
       const isReady = ref(false);
 

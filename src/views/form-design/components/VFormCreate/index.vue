@@ -28,6 +28,8 @@
   </div>
 </template>
 <script lang="ts">
+  import { type Recordable } from '@vben/types';
+
   import { computed, defineComponent, PropType, provide, ref, unref } from 'vue';
   import FormRender from './components/FormRender.vue';
   import { IFormConfig, AForm } from '../../typings/v-form-component';

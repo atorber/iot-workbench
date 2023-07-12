@@ -4,6 +4,7 @@
   </Button>
 </template>
 <script lang="ts">
+  import type { PropType } from 'vue';
   import { defineComponent, ref, watchEffect, computed, unref } from 'vue';
   import { Button } from 'ant-design-vue';
   import { useCountdown } from './useCountdown';

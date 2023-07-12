@@ -9,6 +9,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+  import type { PropType } from 'vue';
   import { computed } from 'vue';
   import CodeMirrorEditor from './codemirror/CodeMirror.vue';
   import { isString } from '/@/utils/is';

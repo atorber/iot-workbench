@@ -39,7 +39,7 @@
 
   const columns: BasicColumn[] = [
     {
-      title: 'ID',
+      title: '产品标识',
       dataIndex: 'productKey',
       width: 100,
     },

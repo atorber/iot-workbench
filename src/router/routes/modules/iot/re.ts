@@ -4,39 +4,32 @@ import { LAYOUT } from '/@/router/constant';
 // import { t } from '/@/hooks/web/useI18n';
 
 const dm: AppRouteModule = {
-  path: '/dm',
-  name: 'DM',
+  path: '/re',
+  name: 'RE',
   component: LAYOUT,
   redirect: '/dm/product',
   meta: {
-    orderNo: 1,
+    orderNo: 2,
     icon: 'ant-design:codepen-outlined',
-    title: '设备管理',
+    title: '规则引擎',
   },
   children: [
     {
-      path: 'product',
-      name: 'Product',
+      path: 'flow',
+      name: 'Flow',
       component: () => import('/@/views/iot/dm/Product.vue'),
       meta: {
         // affix: true,
-        title: '产品列表',
+        title: '数据流转',
       },
     },
     {
-      path: 'device',
-      name: 'Device',
-      component: () => import('/@/views/iot/dm/Device.vue'),
+      path: 'sink',
+      name: 'Sink',
+      component: () => import('/@/views/iot/dm/Product.vue'),
       meta: {
-        title: '设备列表',
-      },
-    },
-    {
-      path: 'group',
-      name: 'Group',
-      component: () => import('/@/views/iot/dm/Group.vue'),
-      meta: {
-        title: '设备分组',
+        // affix: true,
+        title: '服务目的地',
       },
     },
   ],

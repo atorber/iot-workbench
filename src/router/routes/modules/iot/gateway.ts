@@ -9,7 +9,7 @@ const gm: AppRouteModule = {
   component: LAYOUT,
   redirect: '/gt/gateway',
   meta: {
-    orderNo: 2,
+    orderNo: 3,
     icon: 'ant-design:gateway-outlined',
     title: '网关管理',
   },

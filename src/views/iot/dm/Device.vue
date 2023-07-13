@@ -1,6 +1,9 @@
 <template>
   <div class="p-4">
     <BasicTable @register="registerTable">
+      <template #toolbar>
+        <a-button type="primary" @click="stop"> 添加设备 </a-button>
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <TableAction
@@ -31,7 +34,7 @@
 
   const columns: BasicColumn[] = [
     {
-      title: 'ID',
+      title: '设备名',
       dataIndex: 'deviceName',
       width: 100,
     },
@@ -45,13 +48,13 @@
       dataIndex: 'onlineState',
     },
     {
-      title: '产品名称',
+      title: '所属产品',
       dataIndex: 'productName',
     },
-    {
-      title: '产品类别',
-      dataIndex: 'productCategory',
-    },
+    // {
+    //   title: '产品类别',
+    //   dataIndex: 'productCategory',
+    // },
     {
       title: '节点类型',
       dataIndex: 'deviceType',
@@ -65,6 +68,39 @@
       dataIndex: 'createTime',
     },
   ];
+  const formConfig = {
+    labelWidth: 100,
+    schemas: [
+      {
+        field: 'groupName',
+        label: `设备ID`,
+        component: 'Input',
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
+      },
+      {
+        field: 'groupId',
+        label: `备注名称`,
+        component: 'Input',
+        colProps: {
+          xl: 12,
+          xxl: 8,
+        },
+      },
+      // {
+      //   field: `floor`,
+      //   label: `层级`,
+      //   component: 'Select',
+      //   slot: 'custom',
+      //   colProps: {
+      //     xl: 12,
+      //     xxl: 8,
+      //   },
+      // },
+    ],
+  };
   export default defineComponent({
     components: { BasicTable, TableAction },
     setup() {
@@ -72,6 +108,9 @@
         title: '设备',
         api: deviceListApi,
         columns: columns,
+        showIndexColumn: false,
+        useSearchForm: true,
+        formConfig: formConfig,
         bordered: true,
         rowKey: 'id',
         rowSelection: {

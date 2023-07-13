@@ -1,12 +1,19 @@
 <template>
   <div class="p-4">
     <BasicTable @register="registerTable">
+      <template #toolbar>
+        <a-button type="primary" @click="stop"> 新建产品 </a-button>
+      </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
           <TableAction
             :actions="[
               {
                 label: '查看',
+                onClick: handleEdit.bind(null, record),
+              },
+              {
+                label: '管理设备',
                 onClick: handleEdit.bind(null, record),
               },
               {
@@ -37,14 +44,14 @@
       width: 100,
     },
     {
-      title: '名称',
+      title: '产品名称',
       dataIndex: 'productName',
       width: 200,
     },
-    {
-      title: '类别',
-      dataIndex: 'productCategory',
-    },
+    // {
+    //   title: '类别',
+    //   dataIndex: 'productCategory',
+    // },
     {
       title: '节点类型',
       dataIndex: 'deviceType',
@@ -58,6 +65,48 @@
       dataIndex: 'createTime',
     },
   ];
+  // const formConfig = {
+  //   labelWidth: 100,
+  //   schemas: [
+  //     {
+  //       field: 'groupName',
+  //       label: `产品名称`,
+  //       component: 'Input',
+  //       colProps: {
+  //         xl: 12,
+  //         xxl: 8,
+  //       },
+  //     },
+  //     {
+  //       field: 'groupId',
+  //       label: `产品ID`,
+  //       component: 'Input',
+  //       colProps: {
+  //         xl: 12,
+  //         xxl: 8,
+  //       },
+  //     },
+  //     {
+  //       field: 'groupId',
+  //       label: `描述`,
+  //       component: 'Input',
+  //       colProps: {
+  //         xl: 12,
+  //         xxl: 8,
+  //       },
+  //     },
+  //     // {
+  //     //   field: `floor`,
+  //     //   label: `层级`,
+  //     //   component: 'Select',
+  //     //   slot: 'custom',
+  //     //   colProps: {
+  //     //     xl: 12,
+  //     //     xxl: 8,
+  //     //   },
+  //     // },
+  //   ],
+  // };
   export default defineComponent({
     components: { BasicTable, TableAction },
     setup() {
@@ -66,6 +115,9 @@
         api: productListApi,
         columns: columns,
         bordered: true,
+        showIndexColumn: false,
+        // useSearchForm: true,
+        // formConfig: formConfig,
         rowKey: 'id',
         rowSelection: {
           type: 'checkbox',

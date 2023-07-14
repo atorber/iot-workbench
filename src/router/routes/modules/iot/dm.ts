@@ -32,6 +32,18 @@ const dm: AppRouteModule = {
       },
     },
     {
+      path: 'device_detail/:id',
+      name: 'DeviceDetail',
+      meta: {
+        hideMenu: true,
+        title: '设备详情',
+        ignoreKeepAlive: true,
+        showMenu: false,
+        currentActiveMenu: '/dm/device',
+      },
+      component: () => import('/@/views/iot/dm/DeviceDetail.vue'),
+    },
+    {
       path: 'group',
       name: 'Group',
       component: () => import('/@/views/iot/dm/Group.vue'),

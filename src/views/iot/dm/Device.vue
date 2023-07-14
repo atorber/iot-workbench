@@ -10,7 +10,7 @@
             :actions="[
               {
                 label: '查看',
-                onClick: handleEdit.bind(null, record),
+                onClick: handleView.bind(null, record),
               },
               {
                 label: '删除',
@@ -30,6 +30,7 @@
   import { defineComponent } from 'vue';
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
   import { deviceListApi } from '/@/api/iot/dm/device';
+  import { useGo } from '/@/hooks/web/usePage';
 
   const columns: BasicColumn[] = [
     {
@@ -103,6 +104,7 @@
   export default defineComponent({
     components: { BasicTable, TableAction },
     setup() {
+      const go = useGo();
       const [registerTable] = useTable({
         title: '设备',
         api: deviceListApi,
@@ -110,6 +112,7 @@
         showIndexColumn: false,
         useSearchForm: true,
         formConfig: formConfig,
+        clickToRowSelect: false,
         bordered: true,
         rowKey: 'id',
         rowSelection: {
@@ -122,6 +125,9 @@
           // slots: { customRender: 'action' },
         },
       });
+      function handleView(record: Recordable) {
+        go('/dm/device_detail/' + record.id);
+      }
       function handleEdit(record: Recordable) {
         console.log('点击了编辑', record);
       }
@@ -136,6 +142,7 @@
         handleEdit,
         handleDelete,
         handleOpen,
+        handleView,
       };
     },
   });

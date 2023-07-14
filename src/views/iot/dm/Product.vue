@@ -10,7 +10,7 @@
             :actions="[
               {
                 label: '查看',
-                onClick: handleEdit.bind(null, record),
+                onClick: handleView.bind(null, record),
               },
               {
                 label: '管理设备',
@@ -36,6 +36,7 @@
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
 
   import { productListApi } from '/@/api/iot/dm/product';
+  import { useGo } from '/@/hooks/web/usePage';
 
   const columns: BasicColumn[] = [
     {
@@ -110,6 +111,7 @@
   export default defineComponent({
     components: { BasicTable, TableAction },
     setup() {
+      const go = useGo();
       const [registerTable] = useTable({
         title: '产品',
         api: productListApi,
@@ -118,6 +120,7 @@
         showIndexColumn: false,
         // useSearchForm: true,
         // formConfig: formConfig,
+        clickToRowSelect: false,
         rowKey: 'id',
         rowSelection: {
           type: 'checkbox',
@@ -129,6 +132,9 @@
           // slots: { customRender: 'action' },
         },
       });
+      function handleView(record: Recordable) {
+        go('/dm/product_detail/' + record.id);
+      }
       function handleEdit(record: Recordable) {
         console.log('点击了编辑', record);
       }
@@ -143,6 +149,7 @@
         handleEdit,
         handleDelete,
         handleOpen,
+        handleView,
       };
     },
   });

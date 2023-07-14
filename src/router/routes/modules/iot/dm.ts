@@ -24,6 +24,18 @@ const dm: AppRouteModule = {
       },
     },
     {
+      path: 'product_detail/:id',
+      name: 'ProductDetail',
+      meta: {
+        hideMenu: true,
+        title: '产品详情',
+        ignoreKeepAlive: true,
+        showMenu: false,
+        currentActiveMenu: '/dm/product',
+      },
+      component: () => import('/@/views/iot/dm/ProductDetail.vue'),
+    },
+    {
       path: 'device',
       name: 'Device',
       component: () => import('/@/views/iot/dm/Device.vue'),

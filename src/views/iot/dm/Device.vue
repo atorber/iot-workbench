@@ -60,7 +60,7 @@
       dataIndex: 'deviceType',
     },
     {
-      title: '启用时间',
+      title: '激活时间',
       dataIndex: 'activeTime',
     },
     {

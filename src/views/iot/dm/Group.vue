@@ -1,82 +1,133 @@
 <template>
-  <BasicTable @register="registerTable">
-    <template #form-custom> custom-slot </template>
-    <template #headerTop>
-      <a-alert type="info" show-icon>
-        <template #message>
-          <template v-if="checkedKeys.length > 0">
-            <span>已选中{{ checkedKeys.length }}条记录(可跨页)</span>
-            <a-button type="link" @click="checkedKeys = []" size="small">清空</a-button>
-          </template>
-          <template v-else>
-            <span>未选中任何项目</span>
-          </template>
+  <PageWrapper dense contentFullHeight fixedHeight contentClass="flex">
+    <DeptTree class="w-1/4 xl:w-1/5" @select="handleSelect" />
+    <BasicTable @register="registerTable" class="w-3/4 xl:w-4/5" :searchInfo="searchInfo">
+      <template #toolbar>
+        <a-button type="primary" @click="handleCreate">新增设备</a-button>
+      </template>
+      <template #bodyCell="{ column, record }">
+        <template v-if="column.key === 'action'">
+          <TableAction
+            :actions="[
+              {
+                icon: 'clarity:info-standard-line',
+                tooltip: '设备详情',
+                onClick: handleView.bind(null, record),
+              },
+              {
+                icon: 'ant-design:delete-outlined',
+                color: 'error',
+                tooltip: '删除',
+                popConfirm: {
+                  title: '是否确认删除',
+                  placement: 'left',
+                  confirm: handleDelete.bind(null, record),
+                },
+              },
+            ]"
+          />
         </template>
-      </a-alert>
-    </template>
-    <!-- <template #toolbar>
-      <a-button type="primary" @click="getFormValues">获取表单数据</a-button>
-    </template> -->
-  </BasicTable>
+      </template>
+    </BasicTable>
+    <AccountModal @register="registerModal" @success="handleSuccess" />
+  </PageWrapper>
 </template>
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
-  import { BasicTable, useTable } from '/@/components/Table';
-  import { getBasicColumns, getFormConfig } from './tableData';
-  import { Alert } from 'ant-design-vue';
+  import { type Recordable } from '@vben/types';
 
-  import { demoListApi } from '/@/api/demo/table';
+  import { defineComponent, reactive } from 'vue';
+
+  import { BasicTable, useTable, TableAction } from '/@/components/Table';
+  import { getAccountList } from '/@/api/demo/system';
+  import { PageWrapper } from '/@/components/Page';
+  import DeptTree from './DeptTree.vue';
+
+  import { useModal } from '/@/components/Modal';
+  import AccountModal from './AccountModal.vue';
+
+  import { columns, searchFormSchema } from './account.data';
+  import { useGo } from '/@/hooks/web/usePage';
 
   export default defineComponent({
-    components: { BasicTable, AAlert: Alert },
+    name: 'AccountManagement',
+    components: { BasicTable, PageWrapper, DeptTree, AccountModal, TableAction },
     setup() {
-      const checkedKeys = ref<Array<string | number>>([]);
-      const [registerTable, { getForm }] = useTable({
-        title: '分组',
-        api: demoListApi,
-        columns: getBasicColumns(),
-        useSearchForm: true,
-        formConfig: getFormConfig(),
-        showTableSetting: false,
-        tableSetting: { fullScreen: true },
-        showIndexColumn: false,
+      const go = useGo();
+      const [registerModal, { openModal }] = useModal();
+      const searchInfo = reactive<Recordable>({});
+      const [registerTable, { reload, updateTableDataRecord }] = useTable({
+        title: '设备列表',
+        api: getAccountList,
         rowKey: 'id',
-        rowSelection: {
-          type: 'checkbox',
-          selectedRowKeys: checkedKeys,
-          onSelect: onSelect,
-          onSelectAll: onSelectAll,
+        columns,
+        formConfig: {
+          labelWidth: 120,
+          schemas: searchFormSchema,
+          autoSubmitOnEnter: true,
+        },
+        useSearchForm: true,
+        showTableSetting: true,
+        bordered: true,
+        handleSearchInfoFn(info) {
+          console.log('handleSearchInfoFn', info);
+          return info;
+        },
+        actionColumn: {
+          width: 120,
+          title: '操作',
+          dataIndex: 'action',
+          // slots: { customRender: 'action' },
         },
       });
 
-      function getFormValues() {
-        console.log(getForm().getFieldsValue());
+      function handleCreate() {
+        openModal(true, {
+          isUpdate: false,
+        });
       }
 
-      function onSelect(record, selected) {
-        if (selected) {
-          checkedKeys.value = [...checkedKeys.value, record.id];
+      function handleEdit(record: Recordable) {
+        console.log(record);
+        openModal(true, {
+          record,
+          isUpdate: true,
+        });
+      }
+
+      function handleDelete(record: Recordable) {
+        console.log(record);
+      }
+
+      function handleSuccess({ isUpdate, values }) {
+        if (isUpdate) {
+          // 演示不刷新表格直接更新内部数据。
+          // 注意：updateTableDataRecord要求表格的rowKey属性为string并且存在于每一行的record的keys中
+          const result = updateTableDataRecord(values.id, values);
+          console.log(result);
         } else {
-          checkedKeys.value = checkedKeys.value.filter((id) => id !== record.id);
+          reload();
         }
       }
-      function onSelectAll(selected, selectedRows, changeRows) {
-        const changeIds = changeRows.map((item) => item.id);
-        if (selected) {
-          checkedKeys.value = [...checkedKeys.value, ...changeIds];
-        } else {
-          checkedKeys.value = checkedKeys.value.filter((id) => {
-            return !changeIds.includes(id);
-          });
-        }
+
+      function handleSelect(deptId = '') {
+        searchInfo.deptId = deptId;
+        reload();
+      }
+
+      function handleView(record: Recordable) {
+        go('/system/account_detail/' + record.id);
       }
 
       return {
         registerTable,
-        getFormValues,
-        checkedKeys,
-        onSelect,
-        onSelectAll,
+        registerModal,
+        handleCreate,
+        handleEdit,
+        handleDelete,
+        handleSuccess,
+        handleSelect,
+        handleView,
+        searchInfo,
       };
     },
   });

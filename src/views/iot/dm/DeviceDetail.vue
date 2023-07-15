@@ -1,35 +1,55 @@
 <template>
-  <div :class="prefixCls">
-    <a-row :class="`${prefixCls}-top`">
+  <PageWrapper :title="`ABCE`" contentBackground @back="goBack">
+    <template #headerContent>
       <Description @register="register1" class="mt-4" />
-    </a-row>
-    <div :class="`${prefixCls}-bottom`">
-      <Tabs>
-        <template v-for="item in achieveList" :key="item.key">
-          <TabPane :tab="item.name">
-            <component :is="item.component" />
-          </TabPane>
-        </template>
-      </Tabs>
+    </template>
+    <!-- <template #extra>
+      <a-button type="primary" danger> 禁用账号 </a-button>
+      <a-button type="primary"> 修改密码 </a-button>
+    </template> -->
+    <template #footer>
+      <a-tabs default-active-key="DeviceStatus" v-model:activeKey="currentKey">
+        <a-tab-pane key="DeviceStatus" tab="设备状态" />
+        <a-tab-pane key="DeviceShadow" tab="设备影子" />
+        <a-tab-pane key="DeviceGroup" tab="设备分组" />
+        <a-tab-pane key="DeviceLog" tab="接口列表" />
+        <a-tab-pane key="DeviceApi" tab="设备日志" />
+      </a-tabs>
+    </template>
+    <div class="pt-4 m-4 desc-wrap">
+      <template v-if="currentKey == 'DeviceStatus'">
+        <component :is="DeviceStatus" />
+      </template>
+      <template v-if="currentKey == 'DeviceShadow'">
+        <component :is="DeviceShadow" />
+      </template>
+      <template v-if="currentKey == 'DeviceGroup'">
+        <component :is="DeviceGroup" />
+      </template>
+      <template v-if="currentKey == 'DeviceLog'">
+        <component :is="DeviceLog" />
+      </template>
+      <template v-if="currentKey == 'DeviceApi'">
+        <component :is="DeviceApi" />
+      </template>
     </div>
-  </div>
+  </PageWrapper>
 </template>
-<script lang="ts">
-  import { Tag, Tabs, Row, Col } from 'ant-design-vue';
+
+<script lang="ts" setup>
+  import { ref } from 'vue';
   import { type Recordable } from '@vben/types';
 
-  import { defineComponent, computed } from 'vue';
-  import { CollapseContainer } from '/@/components/Container/index';
-  import Icon from '@/components/Icon/Icon.vue';
+  import { PageWrapper } from '/@/components/Page';
+  import { useGo } from '/@/hooks/web/usePage';
+  import { useTabs } from '/@/hooks/web/useTabs';
+  import { Tabs } from 'ant-design-vue';
   import DeviceStatus from './components/DeviceStatus.vue';
   import DeviceShadow from './components/DeviceShadow.vue';
   import DeviceGroup from './components/DeviceGroup.vue';
   import DeviceLog from './components/DeviceLog.vue';
   import DeviceApi from './components/DeviceApi.vue';
   import { Description, DescItem, useDescription } from '/@/components/Description/index';
-  import headerImg from '/@/assets/images/header.jpg';
-  import { tags, teams, details, achieveList } from './data';
-  import { useUserStore } from '/@/store/modules/user';
 
   const mockData: Recordable = {
     deviceType: 'DIRECT',
@@ -92,106 +112,33 @@
       label: '创建时间',
     },
   ];
+  defineOptions({ name: 'AccountDetail' });
 
-  export default defineComponent({
-    components: {
-      CollapseContainer,
-      Icon,
-      Tag,
-      Tabs,
-      TabPane: Tabs.TabPane,
-      DeviceStatus,
-      DeviceShadow,
-      DeviceGroup,
-      DeviceLog,
-      DeviceApi,
-      Description,
-      [Row.name]: Row,
-      [Col.name]: Col,
-    },
-    setup() {
-      const userStore = useUserStore();
-      const avatar = computed(() => userStore.getUserInfo.avatar || headerImg);
-      const [register1] = useDescription({
-        title: `${mockData.deviceName}@${mockData.productKey}`,
-        bordered: false,
-        column: 3,
-        size: 'middle',
-        data: mockData,
-        schema: schema,
-      });
-      return {
-        prefixCls: 'account-center',
-        avatar,
-        tags,
-        teams,
-        details,
-        achieveList,
-        register1,
-        // goBack,
-        // currentKey,
-      };
-    },
+  const ATabs = Tabs;
+  const ATabPane = Tabs.TabPane;
+
+  const go = useGo();
+  const currentKey = ref('DeviceStatus');
+  const { setTitle } = useTabs();
+  const [register1] = useDescription({
+    title: '',
+    bordered: false,
+    column: 3,
+    size: 'middle',
+    data: mockData,
+    schema: schema,
   });
-</script>
-<style lang="less" scoped>
-  .account-center {
-    &-col:not(:last-child) {
-      padding: 0 10px;
+  // TODO
+  // 本页代码仅作演示，实际应当通过userId从接口获得用户的相关资料
 
-      &:not(:last-child) {
-        border-right: 1px dashed rgb(206 206 206 / 50%);
-      }
-    }
+  // 设置Tab的标题（不会影响页面标题）
+  setTitle('产品详情');
 
-    &-top {
-      margin: 16px 16px 12px;
-      padding: 10px;
-      border-radius: 3px;
-      background-color: @component-background;
-
-      &__avatar {
-        text-align: center;
-
-        img {
-          margin: auto;
-          border-radius: 50%;
-        }
-
-        span {
-          display: block;
-          font-size: 20px;
-          font-weight: 500;
-        }
-
-        div {
-          margin-top: 3px;
-          font-size: 12px;
-        }
-      }
-
-      &__detail {
-        margin-top: 15px;
-        padding-left: 20px;
-      }
-
-      &__team {
-        &-item {
-          display: inline-block;
-          padding: 4px 24px;
-        }
-
-        span {
-          margin-left: 3px;
-        }
-      }
-    }
-
-    &-bottom {
-      margin: 0 16px 16px;
-      padding: 10px;
-      border-radius: 3px;
-      background-color: @component-background;
-    }
+  // 页面左侧点击返回链接时的操作
+  function goBack() {
+    // 本例的效果时点击返回始终跳转到账号列表页，实际应用时可返回上一页
+    go('/dm/product');
   }
-</style>
+</script>
+
+<style></style>

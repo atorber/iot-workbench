@@ -10,13 +10,15 @@
           <TableAction
             :actions="[
               {
-                icon: 'clarity:info-standard-line',
+                // icon: 'clarity:info-standard-line',
                 tooltip: '设备详情',
+                label: '查看',
                 onClick: handleView.bind(null, record),
               },
               {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
+                label: '删除',
                 tooltip: '删除',
                 popConfirm: {
                   title: '是否确认删除',

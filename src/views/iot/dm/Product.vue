@@ -2,7 +2,7 @@
   <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="stop"> 新建产品 </a-button>
+        <a-button type="primary" @click="handleCreate"> 新建产品 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -25,8 +25,15 @@
             ]"
           />
         </template>
+        <template v-else-if="column.key === 'deviceType'">
+          {{ record.deviceType === 'DIRECT' ? '直连设备' : '网关' }}
+        </template>
+        <template v-else-if="column.key === 'description'">
+          {{ record.description === '' ? '--' : record.description }}
+        </template>
       </template>
     </BasicTable>
+    <RoleDrawer @register="registerDrawer" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
@@ -34,6 +41,8 @@
 
   import { defineComponent } from 'vue';
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
+  import { useDrawer } from '/@/components/Drawer';
+  import RoleDrawer from './RoleDrawer.vue';
 
   import { productListApi } from '/@/api/iot/dm/product';
   import { useGo } from '/@/hooks/web/usePage';
@@ -109,10 +118,11 @@
   //   ],
   // };
   export default defineComponent({
-    components: { BasicTable, TableAction },
+    components: { BasicTable, TableAction, RoleDrawer },
     setup() {
       const go = useGo();
-      const [registerTable] = useTable({
+      const [registerDrawer, { openDrawer }] = useDrawer();
+      const [registerTable, { reload }] = useTable({
         title: '产品',
         api: productListApi,
         columns: columns,
@@ -122,9 +132,9 @@
         // formConfig: formConfig,
         clickToRowSelect: false,
         rowKey: 'id',
-        rowSelection: {
-          type: 'checkbox',
-        },
+        // rowSelection: {
+        //   type: 'checkbox',
+        // },
         actionColumn: {
           width: 250,
           title: '操作',
@@ -144,7 +154,18 @@
       function handleOpen(record: Recordable) {
         console.log('点击了启用', record);
       }
+      function handleCreate() {
+        openDrawer(true, {
+          isUpdate: false,
+        });
+      }
+      function handleSuccess() {
+        reload();
+      }
       return {
+        registerDrawer,
+        handleCreate,
+        handleSuccess,
         registerTable,
         handleEdit,
         handleDelete,

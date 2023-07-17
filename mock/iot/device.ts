@@ -37,10 +37,10 @@ const demoList = (() => {
       time: `@time('HH:mm')`,
       'no|100000-10000000': 100000,
       'status|1': ['normal', 'enable', 'disable'],
-      deviceType: 'DIRECT',
+      'deviceType|1': ['DIRECT', 'GATEWAY'],
       enableState: true,
       activeState: false,
-      activeTime: '1970-01-01 00:00:00',
+      'activeTime|1': ['1970-01-01 00:00:00', '2023-07-13 14:57:47'],
       updateTime: '2023-07-12 14:57:47',
       productKey: 'pc',
       deviceName: 'rxcf94r3yne2kpfg',
@@ -54,7 +54,8 @@ const demoList = (() => {
       alias: 'll的电脑',
       lastOnlineTime: '1970-01-01 00:00:00',
       authType: null,
-      onlineState: false,
+      'onlineState|1': [true, false],
+      // onlineState: false,
     });
   }
   return result;

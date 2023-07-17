@@ -21,6 +21,20 @@
             ]"
           />
         </template>
+        <template v-else-if="column.key === 'onlineState'">
+          <Icon
+            icon="ant-design:bulb-twotone"
+            :size="14"
+            :color="record.onlineState ? 'green' : 'gray'"
+          />
+          {{ record.onlineState ? '在线' : '离线' }}
+        </template>
+        <template v-else-if="column.key === 'deviceType'">
+          {{ record.deviceType === 'DIRECT' ? '直连设备' : '网关' }}
+        </template>
+        <template v-else-if="column.key === 'activeTime'">
+          {{ record.activeTime === '1970-01-01 00:00:00' ? '--' : record.activeTime }}
+        </template>
       </template>
     </BasicTable>
   </div>
@@ -31,6 +45,7 @@
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
   import { deviceListApi } from '/@/api/iot/dm/device';
   import { useGo } from '/@/hooks/web/usePage';
+  import Icon from '/@/components/Icon/Icon.vue';
 
   const columns: BasicColumn[] = [
     {
@@ -102,7 +117,7 @@
     ],
   };
   export default defineComponent({
-    components: { BasicTable, TableAction },
+    components: { BasicTable, TableAction, Icon },
     setup() {
       const go = useGo();
       const [registerTable] = useTable({
@@ -115,9 +130,9 @@
         clickToRowSelect: false,
         bordered: true,
         rowKey: 'id',
-        rowSelection: {
-          type: 'checkbox',
-        },
+        // rowSelection: {
+        //   type: 'checkbox',
+        // },
         actionColumn: {
           width: 250,
           title: '操作',

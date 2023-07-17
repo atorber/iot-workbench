@@ -33,7 +33,7 @@
         </template>
       </template>
     </BasicTable>
-    <RoleDrawer @register="registerDrawer" @success="handleSuccess" />
+    <ProductDrawer @register="registerDrawer" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
@@ -42,7 +42,7 @@
   import { defineComponent } from 'vue';
   import { BasicTable, useTable, BasicColumn, TableAction } from '/@/components/Table';
   import { useDrawer } from '/@/components/Drawer';
-  import RoleDrawer from './RoleDrawer.vue';
+  import ProductDrawer from './ProductDrawer.vue';
 
   import { productListApi } from '/@/api/iot/dm/product';
   import { useGo } from '/@/hooks/web/usePage';
@@ -118,12 +118,12 @@
   //   ],
   // };
   export default defineComponent({
-    components: { BasicTable, TableAction, RoleDrawer },
+    components: { BasicTable, TableAction, ProductDrawer },
     setup() {
       const go = useGo();
       const [registerDrawer, { openDrawer }] = useDrawer();
       const [registerTable, { reload }] = useTable({
-        title: '产品',
+        title: '产品列表',
         api: productListApi,
         columns: columns,
         bordered: true,

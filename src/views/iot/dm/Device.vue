@@ -2,7 +2,7 @@
   <div class="p-4">
     <BasicTable @register="registerTable">
       <template #toolbar>
-        <a-button type="primary" @click="stop"> 添加设备 </a-button>
+        <a-button type="primary" @click="handleCreate"> 添加设备 </a-button>
       </template>
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'action'">
@@ -37,6 +37,7 @@
         </template>
       </template>
     </BasicTable>
+    <DeviceDrawer @register="registerDrawer" @success="handleSuccess" />
   </div>
 </template>
 <script lang="ts">
@@ -46,6 +47,8 @@
   import { deviceListApi } from '/@/api/iot/dm/device';
   import { useGo } from '/@/hooks/web/usePage';
   import Icon from '/@/components/Icon/Icon.vue';
+  import { useDrawer } from '/@/components/Drawer';
+  import DeviceDrawer from './DeviceDrawer.vue';
 
   const columns: BasicColumn[] = [
     {
@@ -88,7 +91,7 @@
     schemas: [
       {
         field: 'groupName',
-        label: `设备ID`,
+        label: `设备名称`,
         component: 'Input',
         colProps: {
           xl: 12,
@@ -117,11 +120,12 @@
     ],
   };
   export default defineComponent({
-    components: { BasicTable, TableAction, Icon },
+    components: { BasicTable, TableAction, Icon, DeviceDrawer },
     setup() {
       const go = useGo();
-      const [registerTable] = useTable({
-        title: '设备',
+      const [registerDrawer, { openDrawer }] = useDrawer();
+      const [registerTable, { reload }] = useTable({
+        title: '设备列表',
         api: deviceListApi,
         columns: columns,
         showIndexColumn: false,
@@ -152,7 +156,18 @@
       function handleOpen(record: Recordable) {
         console.log('点击了启用', record);
       }
+      function handleCreate() {
+        openDrawer(true, {
+          isUpdate: false,
+        });
+      }
+      function handleSuccess() {
+        reload();
+      }
       return {
+        handleSuccess,
+        handleCreate,
+        registerDrawer,
         registerTable,
         handleEdit,
         handleDelete,

@@ -18,10 +18,10 @@
               {
                 icon: 'ant-design:delete-outlined',
                 color: 'error',
-                label: '删除',
-                tooltip: '删除',
+                label: '移除',
+                tooltip: '移除',
                 popConfirm: {
-                  title: '是否确认删除',
+                  title: '是否确认移除',
                   placement: 'left',
                   confirm: handleDelete.bind(null, record),
                 },
@@ -117,7 +117,7 @@
       }
 
       function handleView(record: Recordable) {
-        go('/system/account_detail/' + record.id);
+        go('/dm/device_detail/' + record.id);
       }
 
       return {

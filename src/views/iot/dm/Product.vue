@@ -12,10 +12,10 @@
                 label: '查看',
                 onClick: handleView.bind(null, record),
               },
-              {
-                label: '管理设备',
-                onClick: handleEdit.bind(null, record),
-              },
+              // {
+              //   label: '管理设备',
+              //   onClick: handleEdit.bind(null, record),
+              // },
               {
                 label: '删除',
                 icon: 'ic:outline-delete-outline',

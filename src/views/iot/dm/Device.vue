@@ -129,7 +129,7 @@
         api: deviceListApi,
         columns: columns,
         showIndexColumn: false,
-        useSearchForm: true,
+        useSearchForm: false,
         formConfig: formConfig,
         clickToRowSelect: false,
         bordered: true,

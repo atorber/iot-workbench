@@ -3,21 +3,21 @@
 
 import type { AxiosInstance, AxiosResponse } from 'axios';
 import { clone } from 'lodash-es';
-import type { RequestOptions, Result } from '/#/axios';
+import type { RequestOptions, Result } from '#/axios';
 import type { AxiosTransform, CreateAxiosOptions } from './axiosTransform';
 import { VAxios } from './Axios';
 import { checkStatus } from './checkStatus';
-import { useGlobSetting } from '/@/hooks/setting';
-import { useMessage } from '/@/hooks/web/useMessage';
-import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
-import { isString, isUndefined, isNull, isEmpty } from '/@/utils/is';
-import { getToken } from '/@/utils/auth';
-import { setObjToUrlParams, deepMerge } from '/@/utils';
-import { useErrorLogStoreWithOut } from '/@/store/modules/errorLog';
-import { useI18n } from '/@/hooks/web/useI18n';
+import { useGlobSetting } from '@/hooks/setting';
+import { useMessage } from '@/hooks/web/useMessage';
+import { RequestEnum, ResultEnum, ContentTypeEnum } from '@/enums/httpEnum';
+import { isString, isUndefined, isNull, isEmpty } from '@/utils/is';
+import { getToken } from '@/utils/auth';
+import { setObjToUrlParams, deepMerge } from '@/utils';
+import { useErrorLogStoreWithOut } from '@/store/modules/errorLog';
+import { useI18n } from '@/hooks/web/useI18n';
 import { joinTimestamp, formatRequestDate } from './helper';
-import { useUserStoreWithOut } from '/@/store/modules/user';
-import { AxiosRetry } from '/@/utils/http/axios/axiosRetry';
+import { useUserStoreWithOut } from '@/store/modules/user';
+import { AxiosRetry } from '@/utils/http/axios/axiosRetry';
 import axios from 'axios';
 
 const globSetting = useGlobSetting();
@@ -77,7 +77,8 @@ const transform: AxiosTransform = {
       case ResultEnum.TIMEOUT:
         timeoutMsg = t('sys.api.timeoutMessage');
         const userStore = useUserStoreWithOut();
-        userStore.logout(true);
+        // 被动登出，带redirect地址
+        userStore.logout(false);
         break;
       default:
         if (message) {
@@ -215,6 +216,7 @@ const transform: AxiosTransform = {
     const { isOpenRetry } = config.requestOptions.retryRequest;
     config.method?.toUpperCase() === RequestEnum.GET &&
       isOpenRetry &&
+      error?.response?.status !== 401 &&
       // @ts-ignore
       retryRequest.retry(axiosInstance, error);
     return Promise.reject(error);

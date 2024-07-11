@@ -5,8 +5,11 @@
       v-model:file-list="fileList"
       :list-type="listType"
       :accept="getStringAccept"
+      :multiple="multiple"
+      :maxCount="maxNumber"
       :before-upload="beforeUpload"
       :custom-request="customRequest"
+      :disabled="disabled"
       @preview="handlePreview"
       @remove="handleRemove"
     >
@@ -21,27 +24,32 @@
   </div>
 </template>
 
-<script lang="ts" setup name="ImageUpload">
+<script lang="ts" setup>
   import { ref, toRefs, watch } from 'vue';
   import { PlusOutlined } from '@ant-design/icons-vue';
-  import { Upload, Modal } from 'ant-design-vue';
-  import type { UploadProps } from 'ant-design-vue';
+  import type { UploadFile, UploadProps } from 'ant-design-vue';
+  import { Modal, Upload } from 'ant-design-vue';
   import { UploadRequestOption } from 'ant-design-vue/lib/vc-upload/interface';
   import { useMessage } from '@/hooks/web/useMessage';
-  import { isArray, isFunction } from '@/utils/is';
+  import { isArray, isFunction, isObject, isString } from '@/utils/is';
   import { warn } from '@/utils/log';
   import { useI18n } from '@/hooks/web/useI18n';
   import { useUploadType } from '../hooks/useUpload';
   import { uploadContainerProps } from '../props';
-  import { isImgTypeByName } from '../helper';
+  import { checkFileType } from '../helper';
+  import { UploadResultStatus } from '@/components/Upload/src/types/typing';
+  import { get, omit } from 'lodash-es';
+
+  defineOptions({ name: 'ImageUpload' });
 
   const emit = defineEmits(['change', 'update:value', 'delete']);
   const props = defineProps({
-    ...uploadContainerProps,
+    ...omit(uploadContainerProps, ['previewColumns', 'beforePreviewData']),
   });
   const { t } = useI18n();
   const { createMessage } = useMessage();
   const { accept, helpText, maxNumber, maxSize } = toRefs(props);
+  const isInnerOperate = ref<boolean>(false);
   const { getStringAccept } = useUploadType({
     acceptRef: accept,
     helpTextRef: helpText,
@@ -55,48 +63,78 @@
   const fileList = ref<UploadProps['fileList']>([]);
   const isLtMsg = ref<boolean>(true);
   const isActMsg = ref<boolean>(true);
+  const isFirstRender = ref<boolean>(true)
 
   watch(
     () => props.value,
     (v) => {
-      if (isArray(v)) {
-        fileList.value = v.map((url, i) => ({
-          uid: String(-i),
-          name: url ? url.substring(url.lastIndexOf('/') + 1) : 'image.png',
-          status: 'done',
-          url,
-        }));
+      if (isInnerOperate.value) {
+        isInnerOperate.value = false;
+        return;
+      }
+      let value: string[] = [];
+      if (v) {
+        if (isArray(v)) {
+          value = v;
+        } else {
+          value.push(v);
+        }
+        fileList.value = value.map((item, i) => {
+          if (item && isString(item)) {
+            return {
+              uid: -i + '',
+              name: item.substring(item.lastIndexOf('/') + 1),
+              status: 'done',
+              url: item,
+            };
+          } else if (item && isObject(item)) {
+            return item;
+          } else {
+            return;
+          }
+        }) as UploadProps['fileList'];
+      }
+      emit('update:value', value);
+      if(!isFirstRender.value){
+        emit('change', value);
+        isFirstRender.value = false
       }
     },
-    {
-      immediate: true,
+    { 
+      immediate: true, 
       deep: true,
     },
   );
 
-  function getBase64(file: File) {
-    return new Promise((resolve, reject) => {
+  function getBase64<T extends string | ArrayBuffer | null>(file: File) {
+    return new Promise<T>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
+      reader.onload = () => {
+        resolve(reader.result as T);
+      };
       reader.onerror = (error) => reject(error);
     });
   }
 
-  const handlePreview = async (file: UploadProps['fileList'][number]) => {
+  const handlePreview = async (file: UploadFile) => {
     if (!file.url && !file.preview) {
-      file.preview = (await getBase64(file.originFileObj)) as string;
+      file.preview = await getBase64<string>(file.originFileObj!);
     }
-    previewImage.value = file.url || file.preview;
+    previewImage.value = file.url || file.preview || '';
     previewOpen.value = true;
-    previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1);
+    previewTitle.value =
+      file.name || previewImage.value.substring(previewImage.value.lastIndexOf('/') + 1);
   };
 
-  const handleRemove = async (file: UploadProps['fileList'][number]) => {
+  const handleRemove = async (file: UploadFile) => {
     if (fileList.value) {
-      const index = fileList.value.findIndex((item: any) => item.uuid === file.uuid);
+      const index = fileList.value.findIndex((item) => item.uid === file.uid);
       index !== -1 && fileList.value.splice(index, 1);
-      emit('change', fileList.value);
+      const value = getValue();
+      isInnerOperate.value = true;
+      emit('update:value', value);
+      emit('change', value);
       emit('delete', file);
     }
   };
@@ -108,43 +146,64 @@
 
   const beforeUpload = (file: File) => {
     const { maxSize, accept } = props;
-    const { name } = file;
-    isActMsg.value = isImgTypeByName(name);
-    if (!isActMsg.value) {
+    const isAct = checkFileType(file, accept);
+    if (!isAct) {
       createMessage.error(t('component.upload.acceptUpload', [accept]));
       isActMsg.value = false;
       // 防止弹出多个错误提示
       setTimeout(() => (isActMsg.value = true), 1000);
     }
-    isLtMsg.value = file.size / 1024 / 1024 > maxSize;
-    if (isLtMsg.value) {
+    const isLt = file.size / 1024 / 1024 > maxSize;
+    if (isLt) {
       createMessage.error(t('component.upload.maxSizeMultiple', [maxSize]));
       isLtMsg.value = false;
       // 防止弹出多个错误提示
       setTimeout(() => (isLtMsg.value = true), 1000);
     }
-    return (isActMsg.value && !isLtMsg.value) || Upload.LIST_IGNORE;
+    return (isAct && !isLt) || Upload.LIST_IGNORE;
   };
 
   async function customRequest(info: UploadRequestOption<any>) {
-    const { api } = props;
+    const { api, uploadParams = {}, name, filename, resultField } = props;
     if (!api || !isFunction(api)) {
       return warn('upload api must exist and be a function');
     }
     try {
-      const res = await props.api?.({
+      const res = await api?.({
         data: {
-          ...(props.uploadParams || {}),
+          ...uploadParams,
         },
         file: info.file,
-        name: props.name,
-        filename: props.filename,
+        name: name,
+        filename: filename,
       });
-      info.onSuccess!(res.data);
-      emit('change', fileList.value);
+      if (props.resultField) {
+        let result = get(res, resultField);
+        info.onSuccess!(result);
+      } else {
+        // 不传入 resultField 的情况
+        info.onSuccess!(res.data);
+      }
+      const value = getValue();
+      isInnerOperate.value = true;
+      emit('update:value', value);
+      emit('change', value);
     } catch (e: any) {
+      console.log(e);
       info.onError!(e);
     }
+  }
+
+  function getValue() {
+    const list = (fileList.value || [])
+      .filter((item) => item?.status === UploadResultStatus.DONE)
+      .map((item: any) => {
+        if (item?.response && props?.resultField) {
+          return item?.response;
+        }
+        return item?.url || item?.response?.url;
+      });
+    return list;
   }
 </script>
 

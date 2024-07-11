@@ -65,7 +65,7 @@
       </div>
       <FormItem label="表单属性">
         <Col
-          ><Checkbox v-model:checked="formConfig.colon" v-if="formConfig.layout == 'horizontal'"
+          ><Checkbox v-model:checked="formConfig.colon" v-if="formConfig.layout === 'horizontal'"
             >label后面显示冒号</Checkbox
           ></Col
         >
@@ -86,6 +86,8 @@
     RadioChangeEvent,
     Form,
     FormItem,
+    RadioButton,
+    RadioGroup,
   } from 'ant-design-vue';
 
   const { formConfig } = useFormDesignState();

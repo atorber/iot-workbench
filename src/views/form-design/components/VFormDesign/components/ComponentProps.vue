@@ -89,7 +89,7 @@
     Col,
     Row,
   } from 'ant-design-vue';
-  import RadioButtonGroup from '/@/components/Form/src/components/RadioButtonGroup.vue';
+  import RadioButtonGroup from '@/components/Form/src/components/RadioButtonGroup.vue';
   import { computed, defineComponent, ref, watch } from 'vue';
   import { useFormDesignState } from '../../../hooks/useFormDesignState';
   import {
@@ -182,7 +182,7 @@
           baseComponentAttrs[formConfig.value.currentItem!.component] &&
             baseComponentAttrs[formConfig.value.currentItem!.component].forEach(async (item) => {
               if (item.component) {
-                if (['Switch', 'Checkbox', 'Radio'].includes(item.component)) {
+                if (['Switch', 'Checkbox', 'Radio'].includes(item.component as string)) {
                   item.category = 'control';
                   allOptions.value.push(item);
                 } else {
@@ -199,14 +199,14 @@
       // 控制性的选项
       const controlOptions = computed(() => {
         return allOptions.value.filter((item) => {
-          return item.category == 'control';
+          return item.category === 'control';
         });
       });
 
       // 非控制性选择
       const inputOptions = computed(() => {
         return allOptions.value.filter((item) => {
-          return item.category == 'input';
+          return item.category === 'input';
         });
       });
 

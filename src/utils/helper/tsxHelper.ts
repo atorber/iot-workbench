@@ -1,6 +1,6 @@
 import { Slots } from 'vue';
-import { isFunction } from '/@/utils/is';
-import { RenderOpts } from '/@/components/Form';
+import { isFunction } from '@/utils/is';
+import { RenderOpts } from '@/components/Form';
 
 /**
  * @description:  Get slot to prevent empty error
@@ -27,7 +27,7 @@ export function getSlot(slots: Slots, slot = 'default', data?: any, opts?: Rende
 export function extendSlots(slots: Slots, excludeKeys: string[] = []) {
   const slotKeys = Object.keys(slots);
   const ret: any = {};
-  slotKeys.map((key) => {
+  slotKeys.forEach((key) => {
     if (excludeKeys.includes(key)) {
       return null;
     }

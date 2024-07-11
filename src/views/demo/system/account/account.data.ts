@@ -1,5 +1,5 @@
-import { getAllRoleList, isAccountExist } from '/@/api/demo/system';
-import { BasicColumn, FormSchema } from '/@/components/Table';
+import { getAllRoleList, isAccountExist } from '@/api/demo/system';
+import { BasicColumn, FormSchema } from '@/components/Table';
 
 /**
  * transform mock data
@@ -128,7 +128,6 @@ export const accountFormSchema: FormSchema[] = [
     componentProps: {
       fieldNames: {
         label: 'deptName',
-        key: 'id',
         value: 'id',
       },
       getPopupContainer: () => document.body,

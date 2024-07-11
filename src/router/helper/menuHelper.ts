@@ -1,8 +1,8 @@
-import { AppRouteModule } from '/@/router/types';
-import type { MenuModule, Menu, AppRouteRecordRaw } from '/@/router/types';
-import { findPath, treeMap } from '/@/utils/helper/treeHelper';
+import { AppRouteModule } from '@/router/types';
+import type { MenuModule, Menu, AppRouteRecordRaw } from '@/router/types';
+import { findPath, treeMap } from '@/utils/helper/treeHelper';
 import { cloneDeep } from 'lodash-es';
-import { isHttpUrl } from '/@/utils/is';
+import { isHttpUrl } from '@/utils/is';
 import { RouteParams } from 'vue-router';
 import { toRaw } from 'vue';
 
@@ -33,9 +33,7 @@ function joinParentPath(menus: Menu[], parentPath = '') {
 
 // Parsing the menu module
 export function transformMenuModule(menuModule: MenuModule): Menu {
-  const { menu } = menuModule;
-
-  const menuList = [menu];
+  const menuList = [menuModule];
 
   joinParentPath(menuList);
   return menuList[0];
@@ -63,12 +61,12 @@ export function transformRouteToMenu(routeModList: AppRouteModule[], routerMappi
   // 提取树指定结构
   const list = treeMap(routeList, {
     conversion: (node: AppRouteRecordRaw) => {
-      const { meta: { title, hideMenu = false } = {} } = node;
+      const { meta: { hideMenu = false } = {}, name } = node;
 
       return {
         ...(node.meta || {}),
         meta: node.meta,
-        name: title,
+        name,
         hideMenu,
         path: node.path,
         ...(node.redirect ? { redirect: node.redirect } : {}),

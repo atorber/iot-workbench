@@ -6,14 +6,16 @@
       :mode="mode"
       :readonly="readonly"
       :bordered="bordered"
+      :config="config"
     />
   </div>
 </template>
 <script lang="ts" setup>
   import { computed } from 'vue';
   import CodeMirrorEditor from './codemirror/CodeMirror.vue';
-  import { isString } from '/@/utils/is';
+  import { isString } from '@/utils/is';
   import { MODE } from './typing';
+  import type { EditorConfiguration } from 'codemirror';
 
   const props = defineProps({
     value: { type: [Object, String] as PropType<Record<string, any> | string> },
@@ -28,6 +30,7 @@
     readonly: { type: Boolean },
     autoFormat: { type: Boolean, default: true },
     bordered: { type: Boolean, default: false },
+    config: { type: Object as PropType<EditorConfiguration>, default: () => {} },
   });
 
   const emit = defineEmits(['change', 'update:value', 'format-error']);
